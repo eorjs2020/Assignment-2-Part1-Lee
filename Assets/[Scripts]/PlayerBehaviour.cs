@@ -98,7 +98,7 @@ public class PlayerBehaviour : MonoBehaviour
     }
 
     private void ChangeAnimation(PlayerAnimationState playerAnimationState)
-    {
+    {        
         state = playerAnimationState;
         animator.SetInteger("AnimationState", (int)state);
     }
