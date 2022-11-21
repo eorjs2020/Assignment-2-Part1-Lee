@@ -39,6 +39,7 @@ public class PlayerBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        isAttack = false;
         damageTimer = 0f;
         isDamage = false;
         Data.Instance.health = 5;
@@ -50,12 +51,15 @@ public class PlayerBehaviour : MonoBehaviour
     }
 
     private void Update()
-    {
+    {     
         
-        if(Time.time >= nextAttack)
+        
+        if (Input.GetKeyDown(KeyCode.J))
         {
             Attack();
         }
+        
+        
         if (isDamage)
         {
             if (damageTimer <= 1.0f)
@@ -87,8 +91,9 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void Attack()
     {
-        if (Input.GetKeyDown(KeyCode.J) && !isAttack)
+        if (Time.time >= nextAttack)
         {
+            isAttack = false;
             animator.SetTrigger("Attack");
 
             Collider2D[] enemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, enemyLayer);
@@ -100,6 +105,16 @@ public class PlayerBehaviour : MonoBehaviour
             nextAttack = Time.time + 1f / attackRate;
         }
         
+        
+    }
+
+    public void ButtonAttack()
+    {
+        if (!isAttack)
+        {
+            isAttack = true;
+            Attack();            
+        }
     }
 
     private void Move()
@@ -167,10 +182,10 @@ public class PlayerBehaviour : MonoBehaviour
             isDamage = true;
             Data.Instance.health -= 1;
             GameController.Instance.ChangeHealth();
-            /*if (Data.Instance.health <= 0)
+            if (Data.Instance.health <= 0)
             {
                 SceneManager.LoadScene("ScoreScene");
-            }*/
+            }
             
         }
     }

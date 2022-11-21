@@ -11,7 +11,7 @@ public class EndState : MonoBehaviour
     private Data data;
     private void Start()
     {
-        if (Data.Instance.health >= 0)
+        if (Data.Instance?.health > 0)
         {
             State.text = "Win";
             Score.text = Data.Instance.score.ToString();
@@ -26,7 +26,7 @@ public class EndState : MonoBehaviour
     public void BacktoMain()
     {
         data = GameObject.FindObjectOfType<Data>();
-        Destroy(data.gameObject);
-        SceneManager.LoadScene("MainMenu");
+        if(data)Destroy(data.gameObject);
+        SceneManager.LoadScene("MenuScreen");
     }
 }
