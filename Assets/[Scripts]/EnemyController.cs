@@ -65,7 +65,7 @@ public class EnemyController : MonoBehaviour
             }
         }
     }
-
+   
     public void Move()
     {
         transform.position += new Vector3(direction.x * horizontalSpeed * Time.deltaTime, 0.0f);
@@ -80,9 +80,11 @@ public class EnemyController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.name == "Player")
+        if (collision.gameObject.tag == "Player")
         {
-            gameObject.GetComponent<PlayerBehaviour>();
+            collision.gameObject.GetComponent<PlayerBehaviour>().GetDamage();          
+
+            Flip();
         }
     }
 
@@ -98,7 +100,7 @@ public class EnemyController : MonoBehaviour
     {
         
         if (!isDamage)
-        {
+        {            
             animator.SetTrigger("Damaged");
             isDamage = true;
             enemyHealth -= 50.0f;

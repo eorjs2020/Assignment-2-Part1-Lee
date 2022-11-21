@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerBehaviour : MonoBehaviour
 {
@@ -33,9 +34,15 @@ public class PlayerBehaviour : MonoBehaviour
     private float nextAttack;
     public float attackRate = 2f;
 
+    private float damageTimer;
+    private bool isDamage;
     // Start is called before the first frame update
     void Start()
     {
+        damageTimer = 0f;
+        isDamage = false;
+        Data.Instance.health = 5;
+        GameController.Instance.ChangeHealth();
         nextAttack = 0.0f;
         rigid2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
@@ -47,13 +54,21 @@ public class PlayerBehaviour : MonoBehaviour
         
         if(Time.time >= nextAttack)
         {
-            if (Input.GetKeyDown(KeyCode.J) && !isAttack)
+            Attack();
+        }
+        if (isDamage)
+        {
+            if (damageTimer <= 1.0f)
             {
-                Attack();
-                nextAttack = Time.time + 1f / attackRate;
+                damageTimer += Time.time;
+            }
+            if (damageTimer >= 1.0f)
+            {
+                damageTimer = 0.0f;
+                isDamage = false;
             }
         }
-        
+
     }
 
     // Update is called once per frame
@@ -70,16 +85,21 @@ public class PlayerBehaviour : MonoBehaviour
         AirCheck();
     }
 
-    private void Attack()
+    public void Attack()
     {
-        animator.SetTrigger("Attack");
+        if (Input.GetKeyDown(KeyCode.J) && !isAttack)
+        {
+            animator.SetTrigger("Attack");
 
-        Collider2D[] enemies =  Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, enemyLayer);
+            Collider2D[] enemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, enemyLayer);
 
-        foreach(Collider2D enemy in enemies)
-        {      
-            enemy.gameObject.GetComponent<EnemyController>()?.GetDamage();
+            foreach (Collider2D enemy in enemies)
+            {
+                enemy.gameObject.GetComponent<EnemyController>().GetDamage();
+            }
+            nextAttack = Time.time + 1f / attackRate;
         }
+        
     }
 
     private void Move()
@@ -137,6 +157,22 @@ public class PlayerBehaviour : MonoBehaviour
     {        
         state = playerAnimationState;
         animator.SetInteger("AnimationState", (int)state);
+    }
+
+    public void GetDamage()
+    {
+        if (!isDamage && !isAttack)
+        {
+           
+            isDamage = true;
+            Data.Instance.health -= 1;
+            GameController.Instance.ChangeHealth();
+            /*if (Data.Instance.health <= 0)
+            {
+                SceneManager.LoadScene("ScoreScene");
+            }*/
+            
+        }
     }
 
     public void OnDrawGizmos()
