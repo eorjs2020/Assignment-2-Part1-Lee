@@ -53,6 +53,14 @@ public class EnemyController : MonoBehaviour
         transform.localScale = new Vector3(x, 1.0f, 1.0f);
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.name == "Player")
+        {
+            gameObject.GetComponent<PlayerBehaviour>().GetDamage();
+        }
+    }
+
     public void OnDrawGizmos()
     {
         Gizmos.color = Color.cyan;

@@ -108,4 +108,9 @@ public class PlayerBehaviour : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(groundPoint.position, groundRadius);
     }
+
+    public void GetDamage()
+    {
+
+    }
 }

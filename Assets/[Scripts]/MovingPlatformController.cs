@@ -60,6 +60,7 @@ public class MovingPlatformController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         Move();
     }
 
@@ -87,6 +88,21 @@ public class MovingPlatformController : MonoBehaviour
             }
 
         }
+        if (isDisappear)
+        {
+            if (timer <= 1.5f)
+            {
+                timer += customSpeedFactor;
+            }
+            if (timer >= 1.5f)
+            {
+                timer = 0.0f;
+                isDisappear = false;
+                collider.enabled = true;
+                spriteRenderer.enabled = true;
+            }
+        }
+
         if(direction == PlatformDirection.DISAPPEAR && willDispear)
         {
             if (timer <= 1.0f)
@@ -95,8 +111,11 @@ public class MovingPlatformController : MonoBehaviour
             }
             if (timer >= 1.0f)
             {
+                timer = 0.0f;
+                isDisappear = true;
                 collider.enabled = false;
                 spriteRenderer.enabled = false;
+                willDispear = false;
             }
         }
 
