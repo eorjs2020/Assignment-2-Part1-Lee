@@ -18,26 +18,51 @@ public class EnemyController : MonoBehaviour
     public bool isGrounded;
     public Vector2 direction;
 
+    public float enemyHealth;
+    
+    private Animator animator;
+    private bool isDamage;
+    private float timer;
 
     void Start()
-    {
+    {        
+        timer = 0.0f;
+        animator = GetComponent<Animator>();
+        isDamage = false;
+        enemyHealth = 100.0f;
         direction = Vector2.left;
     }
 
     // Update is called once per frame
     void Update()
     {
-        isObstacleAhead = Physics2D.Linecast(groundPoint.position, inFrontPoint.position, groundLayerMask);
-        isGroundAhead = Physics2D.Linecast(groundPoint.position, aheadPoint.position, groundLayerMask);
-        isGrounded = Physics2D.OverlapCircle(groundPoint.position, groundRadius, groundLayerMask);
-        
-        if(isGrounded && isGroundAhead)
+        if (!isDamage)
         {
-            Move();
+            isObstacleAhead = Physics2D.Linecast(groundPoint.position, inFrontPoint.position, groundLayerMask);
+            isGroundAhead = Physics2D.Linecast(groundPoint.position, aheadPoint.position, groundLayerMask);
+            isGrounded = Physics2D.OverlapCircle(groundPoint.position, groundRadius, groundLayerMask);
+
+            if (isGrounded && isGroundAhead)
+            {
+                Move();
+            }
+            if (isObstacleAhead || !isGroundAhead)
+            {
+                Flip();
+            }
         }
-        if(isObstacleAhead || !isGroundAhead)
+        else
         {
-            Flip();
+            if (timer <= 1.0f)
+            {
+                timer += Time.deltaTime;
+            }
+            if(timer >= 1.0f)
+            {
+                timer = 0.0f;
+                animator.SetTrigger("Normal");
+                isDamage = false;
+            }
         }
     }
 
@@ -57,7 +82,7 @@ public class EnemyController : MonoBehaviour
     {
         if (collision.gameObject.name == "Player")
         {
-            gameObject.GetComponent<PlayerBehaviour>().GetDamage();
+            gameObject.GetComponent<PlayerBehaviour>();
         }
     }
 
@@ -67,5 +92,20 @@ public class EnemyController : MonoBehaviour
         Gizmos.DrawWireSphere(groundPoint.position, groundRadius);
         Gizmos.DrawLine(groundPoint.position, inFrontPoint.position);
         Gizmos.DrawLine(groundPoint.position, aheadPoint.position);
+    }
+
+    public void GetDamage()
+    {
+        
+        if (!isDamage)
+        {
+            animator.SetTrigger("Damaged");
+            isDamage = true;
+            enemyHealth -= 50.0f;
+            if(enemyHealth <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 }

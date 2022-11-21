@@ -23,27 +23,63 @@ public class PlayerBehaviour : MonoBehaviour
     public Joystick LeftStick;
     [Range(0.1f, 1.0f)]
     public float verticalTrheshhold;
-
+    public bool isAttack;
     private Rigidbody2D rigid2D;
 
+    [Header("Attack")]
+    public Transform attackPoint;
+    public float attackRadius;
+    public LayerMask enemyLayer;
+    private float nextAttack;
+    public float attackRate = 2f;
 
     // Start is called before the first frame update
     void Start()
     {
+        nextAttack = 0.0f;
         rigid2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         LeftStick = (Application.isMobilePlatform) ? GameObject.Find("LeftStick").GetComponent<Joystick>() : null;
     }
 
+    private void Update()
+    {
+        
+        if(Time.time >= nextAttack)
+        {
+            if (Input.GetKeyDown(KeyCode.J) && !isAttack)
+            {
+                Attack();
+                nextAttack = Time.time + 1f / attackRate;
+            }
+        }
+        
+    }
+
     // Update is called once per frame
     void FixedUpdate()
     {
+        
         var hit = Physics2D.OverlapCircle(groundPoint.position, groundRadius, groundLayerMask);
         isGrounded = hit;
-
-        Move();
-        Jump();
+        if (!isAttack)
+        {
+            Move();
+            Jump();
+        }
         AirCheck();
+    }
+
+    private void Attack()
+    {
+        animator.SetTrigger("Attack");
+
+        Collider2D[] enemies =  Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, enemyLayer);
+
+        foreach(Collider2D enemy in enemies)
+        {      
+            enemy.gameObject.GetComponent<EnemyController>()?.GetDamage();
+        }
     }
 
     private void Move()
@@ -105,12 +141,14 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void OnDrawGizmos()
     {
+        Gizmos.color = Color.white;
+        if (attackPoint != null)
+        {
+            Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
+        }
+
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(groundPoint.position, groundRadius);
     }
 
-    public void GetDamage()
-    {
-
-    }
 }

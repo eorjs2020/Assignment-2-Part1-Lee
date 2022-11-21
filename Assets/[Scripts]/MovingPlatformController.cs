@@ -26,7 +26,7 @@ public class MovingPlatformController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private bool isDisappear;
     private bool willDispear;
-    private BoxCollider2D collider;
+    private Collider2D collider;
 
     private Vector2 startPoint;
     private Vector2 destinationPoint;
