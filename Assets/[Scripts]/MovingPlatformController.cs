@@ -17,12 +17,16 @@ public class MovingPlatformController : MonoBehaviour
 
     [Range(0.01f, 0.1f)]
     public float customSpeedFactor = 0.02f;
-
+    
 
     [Header("PlatformPathPoints")]
     public List<Transform> pathPoints;
 
 
+    private SpriteRenderer spriteRenderer;
+    private bool isDisappear;
+    private bool willDispear;
+    private BoxCollider2D collider;
 
     private Vector2 startPoint;
     private Vector2 destinationPoint;
@@ -33,6 +37,9 @@ public class MovingPlatformController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        isDisappear = false;
+        collider = GetComponent<BoxCollider2D>();
         timer = 0.0f;
         currentPointIndex = 0;
         startPoint = transform.position;        
@@ -80,6 +87,19 @@ public class MovingPlatformController : MonoBehaviour
             }
 
         }
+        if(direction == PlatformDirection.DISAPPEAR && willDispear)
+        {
+            if (timer <= 1.0f)
+            {
+                timer += customSpeedFactor;
+            }
+            if (timer >= 1.0f)
+            {
+                collider.enabled = false;
+                spriteRenderer.enabled = false;
+            }
+        }
+
     }
 
     public void Move()
@@ -107,6 +127,20 @@ public class MovingPlatformController : MonoBehaviour
             case PlatformDirection.CUSTOM:
                 transform.position = Vector2.Lerp(startPoint, destinationPoint, timer);
                 break;
+            case PlatformDirection.DISAPPEAR:
+                
+                break;
         }
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.name == "Player")
+        {
+            willDispear = true;
+        }
+    }
+
 }
+
+
