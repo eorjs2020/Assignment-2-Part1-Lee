@@ -1,3 +1,12 @@
+//Singleton
+//LastUpdate 22_11_21
+//Daekoen_Lee 101076401
+//Revision History
+//First modified 22_11_21 - Build and Making Script
+//Description - Singleton system.
+// if you want to make singleton, put singleton<clasname>
+// ex) public class Example : Singleton<Example> (when you making class)
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

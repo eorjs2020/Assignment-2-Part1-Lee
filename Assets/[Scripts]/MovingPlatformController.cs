@@ -1,3 +1,11 @@
+//MovingPlatformController
+//LastUpdate 22_11_21
+//Daekoen_Lee 101076401
+//Revision History
+//First modified 22_11_21 - Build and Making Script
+//Description - MovingPlatformController - makes platform moving and disappear
+
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

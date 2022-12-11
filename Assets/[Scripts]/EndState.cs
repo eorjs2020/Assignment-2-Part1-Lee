@@ -1,3 +1,10 @@
+//EndState
+//LastUpdate 22_11_21
+//Daekoen_Lee 101076401
+//Revision History
+//First modified 22_12_11 - Added Music
+//Description - EndState controller
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +18,7 @@ public class EndState : MonoBehaviour
     private Data data;
     private void Start()
     {
+        SoundManager.Instance.PlayMusic(Sound.END_MUSIC);
         if (Data.Instance?.health > 0)
         {
             State.text = "Win";

@@ -1,3 +1,10 @@
+//PlayerBehaviour
+//LastUpdate 22_11_21
+//Daekoen_Lee 101076401
+//Revision History
+//First modified 22_12_11 - added Sound
+//Description - Player Behavior (Move, jump, attack, animation Controller)
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -42,12 +49,13 @@ public class PlayerBehaviour : MonoBehaviour
         isAttack = false;
         damageTimer = 0f;
         isDamage = false;
-        Data.Instance.health = 5;
+        Data.Instance.ResetHealth();
         GameController.Instance.ChangeHealth();
         nextAttack = 0.0f;
         rigid2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         LeftStick = (Application.isMobilePlatform) ? GameObject.Find("LeftStick").GetComponent<Joystick>() : null;
+        SoundManager.Instance.PlayMusic(Sound.MAIN_MUSIC);
     }
 
     private void Update()
@@ -95,7 +103,7 @@ public class PlayerBehaviour : MonoBehaviour
         {
             isAttack = false;
             animator.SetTrigger("Attack");
-
+            SoundManager.Instance.PlaySoundFX(Sound.ATTACK, Chanel.PLAYER_SOUND_FX);
             Collider2D[] enemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, enemyLayer);
 
             foreach (Collider2D enemy in enemies)
@@ -152,10 +160,10 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void Jump()       
     {
-        var y = Input.GetAxis("Jump") + ((Application.isMobilePlatform) ? LeftStick.Vertical : 0.0f);
-
-        if((isGrounded) && (y > verticalTrheshhold))
+        var y = Input.GetAxis("Jump") + ((Application.isMobilePlatform) ? LeftStick.Vertical : 0.0f);        
+        if ((isGrounded) && (y > verticalTrheshhold))
         {
+            SoundManager.Instance.PlaySoundFX(Sound.JUMP, Chanel.PLAYER_SOUND_FX);
             rigid2D.AddForce(Vector2.up * verticalForce, ForceMode2D.Impulse);
         }
     }
@@ -178,7 +186,7 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (!isDamage && !isAttack)
         {
-           
+            SoundManager.Instance.PlaySoundFX(Sound.HURT, Chanel.PLAYER_HURT_FX);
             isDamage = true;
             Data.Instance.health -= 1;
             GameController.Instance.ChangeHealth();

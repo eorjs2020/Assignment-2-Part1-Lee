@@ -1,3 +1,10 @@
+//EnemyController
+//LastUpdate 22_11_21
+//Daekoen_Lee 101076401
+//Revision History
+//First modified 22_11_21 - Build and Making Script
+//Description - Enemy Behavior (Move, find player)
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -106,6 +113,7 @@ public class EnemyController : MonoBehaviour
             enemyHealth -= 50.0f;
             if(enemyHealth <= 0)
             {
+                Data.Instance.GetScore(500);
                 Destroy(gameObject);
             }
         }
